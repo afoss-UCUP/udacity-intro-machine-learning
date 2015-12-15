@@ -67,10 +67,16 @@ plt.show()
 ### for the data and store them to a list called pred
 from cluster_kmeans import clusterKMeans
 
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+scaler = scaler.fit(finance_features)
+
+finance_features = scaler.transform(finance_features)
 clus = clusterKMeans(finance_features, 2)
 
 pred = clus.predict(finance_features)
-
+scaler.transform(numpy.array([200000.,1000000,0]).reshape(1,-1))
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
@@ -78,3 +84,18 @@ try:
     Draw(pred, finance_features, poi, mark_poi=False, name="clusters_3feat.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"
+
+exercised_option_list = []
+for person in data_dict:
+    if data_dict[person]['exercised_stock_options'] != 'NaN':
+        exercised_option_list.append(data_dict[person]['exercised_stock_options'])
+        
+print min(exercised_option_list), max(exercised_option_list)
+
+salary_list = []
+for person in data_dict:
+    if data_dict[person]['salary'] != 'NaN':
+        salary_list.append(data_dict[person]['salary'])
+        
+print min(salary_list), max(salary_list)
+
