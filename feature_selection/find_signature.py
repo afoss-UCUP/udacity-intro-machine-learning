@@ -2,6 +2,9 @@
 
 import pickle
 import numpy
+import sys
+sys.path.append( "../decision_tree/" )
+
 numpy.random.seed(42)
 
 
@@ -32,12 +35,17 @@ features_test  = vectorizer.transform(features_test).toarray()
 ### a classic way to overfit is to use a small number
 ### of data points and a large number of features;
 ### train on only 150 events to put ourselves in this regime
-features_train = features_train[:150].toarray()
-labels_train   = labels_train[:150]
-
+features_train = features_train.toarray()
+labels_train   = labels_train
 
 
 ### your code goes here
 
+from dt_author_id import classifyDT
 
+clf, accuracy, train_time, pred_time, pred = classifyDT(features_train, labels_train, features_test, labels_test,1)
 
+for i in range(0,len(clf.feature_importances_)):
+    if clf.feature_importances_[i] >= .2:
+        print clf.feature_importances_[i], vectorizer.get_feature_names()[i]
+        
