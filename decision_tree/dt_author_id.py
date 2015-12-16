@@ -40,7 +40,7 @@ def classifyDT(features_train, labels_train, features_test, labels_test, min_smp
     
     accuracy = accuracy_score(labels_test, pred)
     
-    return accuracy, train_time, pred_time, pred 
+    return clf, accuracy, train_time, pred_time, pred
 
 
 #########################################################
