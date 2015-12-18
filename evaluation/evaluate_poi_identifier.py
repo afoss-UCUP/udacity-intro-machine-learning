@@ -14,6 +14,7 @@
 import pickle
 import sys
 sys.path.append("../tools/")
+sys.path.append("../decision_tree/")
 from feature_format import featureFormat, targetFeatureSplit
 
 data_dict = pickle.load(open("../final_project/final_project_dataset.pkl", "r") )
@@ -24,8 +25,23 @@ features_list = ["poi", "salary"]
 data = featureFormat(data_dict, features_list)
 labels, features = targetFeatureSplit(data)
 
-
-
 ### your code goes here 
 
+from sklearn.cross_validation import train_test_split
 
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.3, random_state=42)
+
+from dt_author_id import classifyDT
+
+for n in [1]:
+    
+    clf, accuracy, train_time, pred_time, pred = classifyDT(features_train, labels_train, features_test, labels_test, n)
+    
+    print '\nmin_split:'
+    print accuracy
+    from sklearn.metrics import precision_score
+    from sklearn.metrics import recall_score
+    
+    precision_score(labels_test, pred)
+    recall_score(labels_test, pred)
+    
