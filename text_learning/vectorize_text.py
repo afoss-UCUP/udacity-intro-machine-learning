@@ -78,9 +78,6 @@ pickle.dump( from_data, open("your_email_authors.pkl", "w") )
 
 ### in Part 4, do TfIdf vectorization here
 from sklearn.feature_extraction.text import TfidfVectorizer
-from getStopwords import getStopwords
-
-sw = getStopwords()    
 
 tfidf = TfidfVectorizer(stop_words = 'english')
 
