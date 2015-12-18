@@ -35,4 +35,9 @@ features_train, features_test, labels_train, labels_test = train_test_split(feat
 ### it's all yours from here forward!  
 from dt_author_id import classifyDT
 
-clf, accuracy, train_time, pred_time, pred = classifyDT(features_train, labels_train, features_test, labels_test, 1)
+for n in [1,2,4,8,16,32,64]:
+    
+    clf, accuracy, train_time, pred_time, pred = classifyDT(features_train, labels_train, features_test, labels_test, n)
+    
+    print '\nmin_split:'
+    print accuracy
