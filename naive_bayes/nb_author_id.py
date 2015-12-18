@@ -27,7 +27,7 @@ features_train, features_test, labels_train, labels_test = preprocess()
 ### your code goes here ###
 
 # classify with Naive Bayes and return accuracy on test set
-def classifyNB(features_train, lables_train, features_test, labels_test):
+def classifyNB(features_train, labels_train, features_test, labels_test):
     from sklearn.naive_bayes import GaussianNB
     from sklearn.metrics import accuracy_score
     from time import time    
@@ -44,7 +44,7 @@ def classifyNB(features_train, lables_train, features_test, labels_test):
     
     accuracy = accuracy_score(labels_test, pred)
     
-    return accuracy, train_time, pred_time
+    return clf, accuracy, train_time, pred_time, pred
 
 
 #########################################################
