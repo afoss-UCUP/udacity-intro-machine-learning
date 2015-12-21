@@ -6,31 +6,31 @@ def emailFiles():
     return files
 
 def addressExtract(email_file):
-    address = email_file.rsplit('\\',1)[1]
+    address = email_file.rsplit('/',1)[1]
     address = address.split('_',1)[1]
     
     return address
 
 
-def processEmail(file_in, address, poi_flag, subjects, bodies, pretty = False, small = True):
-    import codecs
-    import json
-    
-    file_out = "{0}.json".format(file_in)
+def processEmail(db, address, poi_flag, subjects, bodies, pretty = False, small = True):
+#    import codecs
+#    import json
+    from mongo_related import insert_data
+    #file_out = "{0}.json".format(file_in)
     data = []
-    with codecs.open(file_out, "a") as fo:
-        for i in range(len(subjects)):
-            el = {}
-            el['address'] = address
-            el['poi_flag'] = poi_flag
-            el['subject'] = subjects[i]
-            el['body'] = bodies[i]
-            
-            if pretty:
-                fo.write(json.dumps(el, indent=2)+"\n")
-            else:
-                fo.write(json.dumps(el) + "\n")
-                
+    #with codecs.open(file_out, "a") as fo:
+    for i in range(len(subjects)):
+        el = {}
+        el['address'] = address
+        el['poi_flag'] = poi_flag
+        el['subject'] = subjects[i]
+        el['body'] = bodies[i]
+        insert_data(el, db)
+#            if pretty:
+#                fo.write(json.dumps(el, indent=2)+"\n")
+#            else:
+#                fo.write(json.dumps(el) + "\n")
+#                
         if small:
             data = []
         
@@ -68,6 +68,26 @@ def emailParser(email_list):
                 pass
     return subject_data, body_data
 
+def processEmailFile(i,email_file_list):
+    from mongo_related import get_db    
+    email_file = email_file_list[i]        
+    email_list = open(email_file, "r")
+    address = addressExtract(email_file)
+    
+    poi_flag = 0
+    if address[:-4] in poi_emails:
+        poi_flag = 1
+    
+    subjects, bodies = emailParser(email_list)
+    db = get_db()
+    db = db.enron_emails
+    processEmail(db, address, poi_flag, subjects, bodies, pretty = False, small = True )
+    
+    email_list.close()
+    
+    
+   
+
 if __name__ == "__main__":
     
     from progressbar import ProgressBar 
@@ -75,30 +95,24 @@ if __name__ == "__main__":
     
     email_file_list = emailFiles()
     from poi_email_addresses import poiEmails
+    from joblib import Parallel, delayed    
     
     poi_emails = poiEmails()
     
     file_in = 'processed_emails'
     
     pbar = ProgressBar()
-    for email_file in pbar(email_file_list): 
-        email_list = open(email_file, "r")
-        address = addressExtract(email_file)
+    parallel = Parallel(n_jobs=-1)
+    parallel(delayed(processEmailFile)(i, email_file_list)
+        for i in range(len(email_file_list)))
         
-        poi_flag = 0
-        if address[:-4] in poi_emails:
-            poi_flag = 1
         
-        subjects, bodies = emailParser(email_list)
-        processEmail(file_in, address, poi_flag, subjects, bodies, pretty = False, small = True )
-        
-        email_list.close()
-    
-    json_file = 'processed_emails.json'
-    from mongo_related import *
-    
-    import_to_db(json_file)
-    
+#    json_file = 'processed_emails.json'
+#    from mongo_related import *
+#    
+#    import_to_db(json_file)
+
+
     
 #import pickle
 #
